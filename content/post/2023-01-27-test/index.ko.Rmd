@@ -1,5 +1,5 @@
 ---
-title: test
+title: 한글
 author: 한재륜
 date: '2023-01-27'
 slug: test
