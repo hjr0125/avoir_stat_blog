@@ -52,7 +52,7 @@ params:
 
     sidebar:
         # emoji: 🍥
-        subtitle: Python, R, Stata, Julia
+        subtitle: R, Stata
         avatar:
             enabled: true
             local: true

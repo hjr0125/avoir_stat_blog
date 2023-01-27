@@ -15,6 +15,54 @@ license: ~
 hidden: no
 comments: yes
 ---
+## 시작
+UoB의 [Tutorial](https://hhsievertsen.shinyapps.io/applied_econ_with_R_dynamic/#section-research-question-data)을 따라가며 R 복습 겸 연습을 하려 이 글을 작성한다.
 
-test
-$$\alpha$$
+먼저 이 튜토리얼의 목적은 다음과 같은 질문에 대답하기 위함이다.
+> 여름학기를 듣는 것이 시험점수를 올리는데 도움이 될까?
+
+### 가상의 환경
+- 5학년과 6학년 사이의 Summer break에 선택적으로 Summer school에 참여할 수 있다.
+- Summer school은 학교 커리큘럼에 집중할 수도, 그릿<[위키](https://ko.wikipedia.org/wiki/%EA%B7%B8%EB%A6%BF)>과 같이 학업 성적 상승에 기여하는 능력에 집중할 수도 있다.
+- Summer school에 참여하는 것은 무료이지만, 등록에는 부모의 능동적인 참여가 필요하다.
+
+### 데이터
+데이터는 위의 링크에서 받을 수 있으며 csv, dta, xlsx 총 3개의 파일로 구성되어있다.
+
+## 데이터 불러오기
+### 패키지를 통하여 불러오기
+기본적인 `Base`에 있는 패키지를 통하여 csv를 불러올 수 있지만, dta와 xlsx를 불러오려면 외부 페키지를 사용해야한다.
+
+`tidyverse`를 이용하면 필요한 패키지들을 자동으로 불러와준다. 
+
+설치가 되어 있지 않다면 `install.packages('tidyverse')`를 통해 설치하자.
+```{r}
+library(tidyverse)
+```
+
+### 파일 불러오기
+위의 코드로 `tidyverse`를 불러왔다면 `readr`도 함께 로드가 되었을 것이다.
+
+`readr`를 통하여 csv파일을 불러오자.
+
+```{r message=FALSE, warning=FALSE}
+school_data_1 <- read_csv('school_data_1.csv')
+head(school_data_1)
+```
+
+이제 STATA의 *dta*파일을 불러오자, *dta* 파일을 불러오는데 여러 패키지가 있지만 나는 `haven`을 사용하였다.
+
+```{r}
+library(haven)
+school_data_2 <- read_stata('school_data_2.dta')
+head(school_data_2)
+```
+
+마지막으로 *xlsx*파일을 불러오자.`dplyr`의 `glipse`를 활용하여 데이터를 둘러볼 수도 있다.
+
+```{r}
+library(readxl)
+school_data_3 <- read_excel('school_data_3.xlsx')
+glimpse(school_data_3)
+```
+
