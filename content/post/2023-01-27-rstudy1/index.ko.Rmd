@@ -7,10 +7,7 @@ categories:
   - R
 tags:
   - R
-<<<<<<< HEAD
   - 응용미시
-=======
->>>>>>> a4061f1f0ba32843caa3334d91aeae4a478c6b04
 description: ~
 image: ~
 math: ~
