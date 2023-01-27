@@ -1,0 +1,9 @@
+
+
+. use 'C://Users/owner/Desktop/avoir_stat_blog/content/post/2023-01-27-rstudy1/
+> school_data_2.dta'
+invalid 'C' 
+r(198);
+
+end of do-file
+r(198);

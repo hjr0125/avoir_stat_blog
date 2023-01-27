@@ -77,7 +77,7 @@ head(school_data_1)
 ## #   ³​test_year_5, ⁴​test_year_6
 ```
 
-이제 STATA의 *dta*파일을 불러오자, *dta* 파일을 불러오는데 여러 패키지가 있지만 나는 `haven`을 사용하였다.
+이제 STATA의 *.dta*파일을 불러오자, *.dta* 파일을 불러오는데 여러 패키지가 있지만 나는 `haven`을 사용하였다.
 
 
 ```r
@@ -98,7 +98,7 @@ head(school_data_2)
 ## 6         6      0
 ```
 
-마지막으로 *xlsx*파일을 불러오자.`dplyr`의 `glipse`를 활용하여 데이터를 둘러볼 수도 있다.
+마지막으로 *xlsx*파일을 불러오자.`dplyr`의 `glimpse`를 활용하여 데이터를 둘러볼 수도 있다.
 
 
 ```r
@@ -120,5 +120,48 @@ glimpse(school_data_3)
 ## $ test_year_10 <dbl> 1.880512, 1.833769, 2.968617, 2.088086, 1.845694, 3.30819…
 ## $ learnings    <dbl> 10.236394, 8.278911, 8.966529, 8.876466, 8.770518, 10.484…
 ## $ school_id    <dbl> 5, 14, 7, 8, 9, 26, 13, 11, 23, 9, 25, 15, 3, 4, 17, 7, 1…
+```
+
+### 데이터 merge
+불러온 데이터들을 합쳐보자. 기본적인 `merge`함수를 이용하여 합칠 수 있지만, 데이터가 커지면 커질수록 속도가 느려짐으로 `dplyr`에 있는 함수를 사용하여 합쳐보자. 함수 사용법은 다음 [Cheat sheet](https://posit.co/resources/cheatsheets/)를 참고하면 사용할 때 편하다.
+
+
+```r
+school_data_merged <- left_join(school_data_1,school_data_2,by = 'person_id') 
+head(school_data_merged)
+```
+
+```
+## # A tibble: 6 × 9
+##   person_id school_id summercamp female parenta…¹ paren…² test_…³ test_…⁴ letter
+##       <dbl>     <dbl>      <dbl>  <dbl>     <dbl>   <dbl>   <dbl>   <dbl>  <dbl>
+## 1         1         5          0      1        10    12.9   NA       1.64      0
+## 2         2        14          1      0        11    14.7    1.30    2.56      0
+## 3         3         7          1      0        14    16.1    2.76    3.53      0
+## 4         4         8          0      0        12    14.6    1.77    2.38      0
+## 5         5         9          1      0        11    13.8    1.18    1.96      0
+## 6         6        26          1      1        11    14.7    2.44    2.81      0
+## # … with abbreviated variable names ¹​parental_schooling, ²​parental_lincome,
+## #   ³​test_year_5, ⁴​test_year_6
+```
+
+
+
+
+```stata
+clear
+use C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_2.dta
+
+insheet using C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_1.csv
+```
+
+```
+(Written by R)
+
+you must start with an empty dataset
+r(18);
+
+end of do-file
+r(18);
 ```
 

@@ -50,7 +50,7 @@ school_data_1 <- read_csv('school_data_1.csv')
 head(school_data_1)
 ```
 
-이제 STATA의 *dta*파일을 불러오자, *dta* 파일을 불러오는데 여러 패키지가 있지만 나는 `haven`을 사용하였다.
+이제 STATA의 *.dta*파일을 불러오자, *.dta* 파일을 불러오는데 여러 패키지가 있지만 나는 `haven`을 사용하였다.
 
 ```{r}
 library(haven)
@@ -58,11 +58,30 @@ school_data_2 <- read_stata('school_data_2.dta')
 head(school_data_2)
 ```
 
-마지막으로 *xlsx*파일을 불러오자.`dplyr`의 `glipse`를 활용하여 데이터를 둘러볼 수도 있다.
+마지막으로 *xlsx*파일을 불러오자.`dplyr`의 `glimpse`를 활용하여 데이터를 둘러볼 수도 있다.
 
 ```{r}
 library(readxl)
 school_data_3 <- read_excel('school_data_3.xlsx')
 glimpse(school_data_3)
+```
+
+### 데이터 merge
+불러온 데이터들을 합쳐보자. 기본적인 `merge`함수를 이용하여 합칠 수 있지만, 데이터가 커지면 커질수록 속도가 느려짐으로 `dplyr`에 있는 함수를 사용하여 합쳐보자. 함수 사용법은 다음 [Cheat sheet](https://posit.co/resources/cheatsheets/)를 참고하면 사용할 때 편하다.
+
+```{r}
+school_data_merged <- left_join(school_data_1,school_data_2,by = 'person_id') 
+head(school_data_merged)
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(Statamarkdown)
+```
+
+```{stata}
+clear
+use C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_2.dta
+
+insheet using C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_1.csv
 ```
 
