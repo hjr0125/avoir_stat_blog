@@ -1,5 +1,5 @@
 ---
-title: 응용미시를 위한 R(1)
+title: 응용미시를 위한 R
 author: 한재륜
 date: '2023-01-27'
 slug: rstudy1
@@ -8,6 +8,7 @@ categories:
 tags:
   - R
   - 응용미시
+  - stata
 description: ~
 image: ~
 math: ~
@@ -29,7 +30,7 @@ UoB의 [Tutorial](https://hhsievertsen.shinyapps.io/applied_econ_with_R_dynamic/
 ### 데이터
 데이터는 위의 링크에서 받을 수 있으며 csv, dta, xlsx 총 3개의 파일로 구성되어있다.
 
-## 데이터 불러오기
+## 데이터 불러오기 및 합치기
 ### 패키지를 통하여 불러오기
 기본적인 `Base`에 있는 패키지를 통하여 csv를 불러올 수 있지만, dta와 xlsx를 불러오려면 외부 페키지를 사용해야한다.
 
@@ -38,6 +39,8 @@ UoB의 [Tutorial](https://hhsievertsen.shinyapps.io/applied_econ_with_R_dynamic/
 설치가 되어 있지 않다면 `install.packages('tidyverse')`를 통해 설치하자.
 ```{r}
 library(tidyverse)
+library(knitr) #마크다운 테이블 작성을 위한 패키지.
+library(kableExtra)
 ```
 
 ### 파일 불러오기
@@ -71,17 +74,93 @@ glimpse(school_data_3)
 
 ```{r}
 school_data_merged <- left_join(school_data_1,school_data_2,by = 'person_id') 
-head(school_data_merged)
+school_data_merged <- left_join(school_data_3,school_data_merged,by = c('person_id','school_id'))
+head(school_data_merged) %>% kable('markdown')
+```
+
+```{r echo = FALSE}
+knitr::kable(tibble(stat = 'avg',summarise_all(school_data_merged,mean)), format="markdown")
 ```
 
 ```{r, echo=FALSE, message=FALSE}
 library(Statamarkdown)
 ```
 
-```{stata}
+STATA에서 Merge는 다음과 같다.
+
+```{stata first-Stata, collectcode=TRUE}
 clear
+insheet using C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_1.csv, clear
+save school_data_1.dta, replace
+
+import excel school_data_3.xlsx, sheet(Sheet 1) firstrow clear 
+save school_data_3.dta, replace
+
 use C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_2.dta
 
-insheet using C:\Users\owner\Desktop\avoir_stat_blog\content\post\2023-01-27-rstudy1\school_data_1.csv
+merge m:m person_id using school_data_1.dta
+merge m:m person_id school_id using school_data_3.dta, generate(_merge1)
+
+
+summarize
+
+```
+
+## 데이터 클리닝
+### Tidying the data
+
+`tidyverse`에 들어있는 `tidyr`로 데이터 전처리를 진행해보자. Wide형태로 되어 있는 데이터를 Long형태로 바꿀 것이다.
+
+`test_year_i`라는 변수가 2~10까지 존재하는 것을 `year`와 `test_score`열을 만들어서 분리시킬 것이다.
+
+```{r}
+# make data tidy (make long)
+school_data_tidy<-school_data_merged%>%
+       pivot_longer(
+         cols = starts_with("test_year"), #test_year로 시작하는 열들을 long 형태로
+         names_to = "year", #test_year_i에서 i에 해당하는 값을 위한 열
+         names_prefix = "test_year_", #year열에 해당하는 값
+         names_transform = list(year = as.integer), #year의 값을 integer로 변환
+         values_to = "test_score" #각 test_year_i에서 값을 test_score에 저장
+       )
+# ncol to get the number of columns of the new dataset
+ncol(school_data_tidy)
+```
+
+위 코드의 대응하는 STATA 코드는 다음과 같다.
+
+```{stata second-Stata}
+drop _merge 
+drop _merge1 
+destring test_year_5 test_year_6, replace force
+reshape long test_year_,i(person_id) j(year)
+rename test_year_ test_score
+```
+
+### 샘플 선택
+결측치 확인을 위하여 `skimr`패키지를 이용하자.
+```{r}
+library(skimr)
+skim(school_data_tidy) %>% kable('markdown') #kable은 markdown작성을 위한것으로 작성할 필요 없다.
+```
+
+위 테이블에서 확인할 수 있듯이 `parental_schooling`과 `test_score`에 결측치가 있음을 확인할 수 있다. 샘플수에 비하여 결측치의 개수가 적고 이 결측치가 무작위하다는 가정하에 `filter`를 통하여 결측치를 제외한 나머지 값들을 선택하여보자.
+
+```{r}
+school_data_selected <- filter(school_data_tidy,!is.na(parental_schooling),!is.na(test_score))
+skim(school_data_selected) %>% kable('markdown')
+```
+
+### 데이터 수정
+변수명을 변경하고 `test_score`를 standardization 해보자. 
+
+```{r}
+analysisdata <- rename(school_data_selected,summerschool = summercamp) #summerschool변수를 summercamp로 변경
+
+analysisdata <- analysisdata %>% group_by(year) %>% 
+mutate(test_score = (test_score - mean(test_score))/sd(test_score))
+
+print(paste('Mean of test score:',mean(analysisdata$test_score)))
+print(paste('SD of test score:',sd(analysisdata$test_score)))
 ```
 
