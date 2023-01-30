@@ -74,12 +74,14 @@ glimpse(school_data_3)
 
 ```{r}
 school_data_merged <- left_join(school_data_1,school_data_2,by = 'person_id') 
-school_data_merged <- left_join(school_data_3,school_data_merged,by = c('person_id','school_id'))
+school_data_merged <- left_join(school_data_3,school_data_merged,by = 
+                                  c('person_id','school_id'))
 head(school_data_merged) %>% kable('markdown')
 ```
 
 ```{r echo = FALSE}
-knitr::kable(tibble(stat = 'avg',summarise_all(school_data_merged,mean)), format="markdown")
+knitr::kable(tibble(stat = 'avg',summarise_all(school_data_merged,mean)),
+             format="markdown")
 ```
 
 ```{r, echo=FALSE, message=FALSE}
@@ -147,15 +149,16 @@ skim(school_data_tidy) %>% kable('markdown') #kable은 markdown작성을 위한�
 위 테이블에서 확인할 수 있듯이 `parental_schooling`과 `test_score`에 결측치가 있음을 확인할 수 있다. 샘플수에 비하여 결측치의 개수가 적고 이 결측치가 무작위하다는 가정하에 `filter`를 통하여 결측치를 제외한 나머지 값들을 선택하여보자.
 
 ```{r}
-school_data_selected <- filter(school_data_tidy,!is.na(parental_schooling),!is.na(test_score))
-skim(school_data_selected) %>% kable('markdown')
+school_data_selected <- filter(school_data_tidy,!is.na(parental_schooling),
+                               !is.na(test_score))
+skim(school_data_selected) %>% kable('html')
 ```
 
 ### 데이터 수정
 변수명을 변경하고 `test_score`를 standardization 해보자. 
 
 ```{r}
-analysisdata <- rename(school_data_selected,summerschool = summercamp) #summerschool변수를 summercamp로 변경
+analysisdata <- rename(school_data_selected,summerschool = summercamp) #summercamp변수를 summerschool로 변경
 
 analysisdata <- analysisdata %>% group_by(year) %>% 
 mutate(test_score = (test_score - mean(test_score))/sd(test_score))
@@ -166,16 +169,41 @@ print(paste('SD of test score:',sd(analysisdata$test_score)))
 
 ## 통계량
 ### 빠르게 통계량 테이블 만들기
+`datasummary_skim`을 통하여 다음과 같이 간단하게 테이블을 작성할 수 있다. `ouput =`옵션을 살펴보면 `.docx`, `latex`, `html`등 다양한 종류로 결과물을 내보낼 수 있으니 상황에 따라 적합한 옵션을 이용하면 좋을 것이다.
 
-```{r}
+```{r message=FALSE}
 # load modelsummary
 library("modelsummary")
 # create a summary stat table
 analysisdata%>%
   filter(year==2)%>%
   select(female,starts_with("paren"),letter,summerschool,test_score)%>%
-  datasummary_skim(output = 'markdown',histogram=FALSE)
+  datasummary_skim(output = 'html',histogram=True)
 ```
 
 
-test
+### 커스텀 테이블 만들기
+
+수식을 사용하여 원하는 테이블을 만드려면 `datasummary()`함수를 이용하면 편리하다.
+
+`female, parental_schooling, letter, test_score`를 `summerschool`참여에 따라 분류하여 테이블을 작성하고 싶으면 다음과 같은 코드를 작성하면 된다.
+```{r}
+datasummary(female+parental_schooling+letter+test_score ~ Factor(summerschool)*
+              (Mean+SD),sparse_header = FALSE,data = analysisdata %>%
+              filter(year == 2),output = 'html')
+```
+
+## 차트 만들기
+### 산점도 그리기
+
+R에서 그래프를 그리는 것은 보통 `ggplot2`를 이용하여 그린다.
+```{r}
+# load ggplot2
+library("ggplot2")
+# create a scatter plot with a fitted line
+ggplot(analysisdata%>%filter(year==5),  
+       aes(x=parental_lincome,y=test_score))+
+       geom_smooth() +
+       geom_point()
+```
+

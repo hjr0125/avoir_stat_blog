@@ -16,6 +16,8 @@ license: ~
 hidden: no
 comments: yes
 ---
+<script src="{{< blogdown/postref >}}index.ko_files/kePrint/kePrint.js"></script>
+<link href="{{< blogdown/postref >}}index.ko_files/lightable/lightable.css" rel="stylesheet" />
 ## 시작
 UoB의 [Tutorial](https://hhsievertsen.shinyapps.io/applied_econ_with_R_dynamic/#section-research-question-data)을 따라가며 R 복습 겸 연습을 하려 이 글을 작성한다.
 
@@ -143,7 +145,8 @@ glimpse(school_data_3)
 
 ```r
 school_data_merged <- left_join(school_data_1,school_data_2,by = 'person_id') 
-school_data_merged <- left_join(school_data_3,school_data_merged,by = c('person_id','school_id'))
+school_data_merged <- left_join(school_data_3,school_data_merged,by = 
+                                  c('person_id','school_id'))
 head(school_data_merged) %>% kable('markdown')
 ```
 
@@ -317,31 +320,178 @@ skim(school_data_tidy) %>% kable('markdown') #kable은 markdown작성을 위한�
 
 
 ```r
-school_data_selected <- filter(school_data_tidy,!is.na(parental_schooling),!is.na(test_score))
-skim(school_data_selected) %>% kable('markdown')
+school_data_selected <- filter(school_data_tidy,!is.na(parental_schooling),
+                               !is.na(test_score))
+skim(school_data_selected) %>% kable('html')
 ```
 
-
-
-|skim_type |skim_variable      | n_missing| complete_rate| numeric.mean|   numeric.sd| numeric.p0| numeric.p25| numeric.p50| numeric.p75| numeric.p100|numeric.hist |
-|:---------|:------------------|---------:|-------------:|------------:|------------:|----------:|-----------:|-----------:|-----------:|------------:|:------------|
-|numeric   |person_id          |         0|             1| 1746.6745209| 1007.8909944|  1.0000000|  873.000000| 1746.000000| 2620.000000|  3491.000000|▇▇▇▇▇        |
-|numeric   |learnings          |         0|             1|   10.0636506|    1.2795210|  5.3860845|    9.180917|   10.041026|   10.960131|    14.620796|▁▃▇▃▁        |
-|numeric   |school_id          |         0|             1|   15.6557090|    8.6756899|  1.0000000|    8.000000|   15.000000|   23.000000|    30.000000|▇▇▇▇▇        |
-|numeric   |summercamp         |         0|             1|    0.4590122|    0.4983251|  0.0000000|    0.000000|    0.000000|    1.000000|     1.000000|▇▁▁▁▇        |
-|numeric   |female             |         0|             1|    0.5155119|    0.4997673|  0.0000000|    0.000000|    1.000000|    1.000000|     1.000000|▇▁▁▁▇        |
-|numeric   |parental_schooling |         0|             1|   11.3248414|    1.1046065| 10.0000000|   11.000000|   11.000000|   12.000000|    23.000000|▇▁▁▁▁        |
-|numeric   |parental_lincome   |         0|             1|   14.5628551|    0.6937543| 12.6675982|   14.114394|   14.521433|   14.947058|    19.449821|▂▇▁▁▁        |
-|numeric   |letter             |         0|             1|    0.2472659|    0.4314295|  0.0000000|    0.000000|    0.000000|    0.000000|     1.000000|▇▁▁▁▂        |
-|numeric   |year               |         0|             1|    6.0001913|    2.5824458|  2.0000000|    4.000000|    6.000000|    8.000000|    10.000000|▇▇▃▇▇        |
-|numeric   |test_score         |         0|             1|    2.3672862|    0.7198608| -0.5700775|    1.882542|    2.327711|    2.840368|     5.045062|▁▂▇▃▁        |
+<table>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> skim_type </th>
+   <th style="text-align:left;"> skim_variable </th>
+   <th style="text-align:right;"> n_missing </th>
+   <th style="text-align:right;"> complete_rate </th>
+   <th style="text-align:right;"> numeric.mean </th>
+   <th style="text-align:right;"> numeric.sd </th>
+   <th style="text-align:right;"> numeric.p0 </th>
+   <th style="text-align:right;"> numeric.p25 </th>
+   <th style="text-align:right;"> numeric.p50 </th>
+   <th style="text-align:right;"> numeric.p75 </th>
+   <th style="text-align:right;"> numeric.p100 </th>
+   <th style="text-align:left;"> numeric.hist </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> person_id </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1746.6745209 </td>
+   <td style="text-align:right;"> 1007.8909944 </td>
+   <td style="text-align:right;"> 1.0000000 </td>
+   <td style="text-align:right;"> 873.000000 </td>
+   <td style="text-align:right;"> 1746.000000 </td>
+   <td style="text-align:right;"> 2620.000000 </td>
+   <td style="text-align:right;"> 3491.000000 </td>
+   <td style="text-align:left;"> ▇▇▇▇▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> learnings </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 10.0636506 </td>
+   <td style="text-align:right;"> 1.2795210 </td>
+   <td style="text-align:right;"> 5.3860845 </td>
+   <td style="text-align:right;"> 9.180917 </td>
+   <td style="text-align:right;"> 10.041026 </td>
+   <td style="text-align:right;"> 10.960131 </td>
+   <td style="text-align:right;"> 14.620796 </td>
+   <td style="text-align:left;"> ▁▃▇▃▁ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> school_id </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 15.6557090 </td>
+   <td style="text-align:right;"> 8.6756899 </td>
+   <td style="text-align:right;"> 1.0000000 </td>
+   <td style="text-align:right;"> 8.000000 </td>
+   <td style="text-align:right;"> 15.000000 </td>
+   <td style="text-align:right;"> 23.000000 </td>
+   <td style="text-align:right;"> 30.000000 </td>
+   <td style="text-align:left;"> ▇▇▇▇▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> summercamp </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 0.4590122 </td>
+   <td style="text-align:right;"> 0.4983251 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.000000 </td>
+   <td style="text-align:right;"> 0.000000 </td>
+   <td style="text-align:right;"> 1.000000 </td>
+   <td style="text-align:right;"> 1.000000 </td>
+   <td style="text-align:left;"> ▇▁▁▁▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> female </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 0.5155119 </td>
+   <td style="text-align:right;"> 0.4997673 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.000000 </td>
+   <td style="text-align:right;"> 1.000000 </td>
+   <td style="text-align:right;"> 1.000000 </td>
+   <td style="text-align:right;"> 1.000000 </td>
+   <td style="text-align:left;"> ▇▁▁▁▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> parental_schooling </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 11.3248414 </td>
+   <td style="text-align:right;"> 1.1046065 </td>
+   <td style="text-align:right;"> 10.0000000 </td>
+   <td style="text-align:right;"> 11.000000 </td>
+   <td style="text-align:right;"> 11.000000 </td>
+   <td style="text-align:right;"> 12.000000 </td>
+   <td style="text-align:right;"> 23.000000 </td>
+   <td style="text-align:left;"> ▇▁▁▁▁ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> parental_lincome </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 14.5628551 </td>
+   <td style="text-align:right;"> 0.6937543 </td>
+   <td style="text-align:right;"> 12.6675982 </td>
+   <td style="text-align:right;"> 14.114394 </td>
+   <td style="text-align:right;"> 14.521433 </td>
+   <td style="text-align:right;"> 14.947058 </td>
+   <td style="text-align:right;"> 19.449821 </td>
+   <td style="text-align:left;"> ▂▇▁▁▁ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> letter </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 0.2472659 </td>
+   <td style="text-align:right;"> 0.4314295 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.000000 </td>
+   <td style="text-align:right;"> 0.000000 </td>
+   <td style="text-align:right;"> 0.000000 </td>
+   <td style="text-align:right;"> 1.000000 </td>
+   <td style="text-align:left;"> ▇▁▁▁▂ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> year </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 6.0001913 </td>
+   <td style="text-align:right;"> 2.5824458 </td>
+   <td style="text-align:right;"> 2.0000000 </td>
+   <td style="text-align:right;"> 4.000000 </td>
+   <td style="text-align:right;"> 6.000000 </td>
+   <td style="text-align:right;"> 8.000000 </td>
+   <td style="text-align:right;"> 10.000000 </td>
+   <td style="text-align:left;"> ▇▇▃▇▇ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> numeric </td>
+   <td style="text-align:left;"> test_score </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 2.3672862 </td>
+   <td style="text-align:right;"> 0.7198608 </td>
+   <td style="text-align:right;"> -0.5700775 </td>
+   <td style="text-align:right;"> 1.882542 </td>
+   <td style="text-align:right;"> 2.327711 </td>
+   <td style="text-align:right;"> 2.840368 </td>
+   <td style="text-align:right;"> 5.045062 </td>
+   <td style="text-align:left;"> ▁▂▇▃▁ </td>
+  </tr>
+</tbody>
+</table>
 
 ### 데이터 수정
 변수명을 변경하고 `test_score`를 standardization 해보자. 
 
 
 ```r
-analysisdata <- rename(school_data_selected,summerschool = summercamp) #summerschool변수를 summercamp로 변경
+analysisdata <- rename(school_data_selected,summerschool = summercamp) #summercamp변수를 summerschool로 변경
 
 analysisdata <- analysisdata %>% group_by(year) %>% 
 mutate(test_score = (test_score - mean(test_score))/sd(test_score))
@@ -363,6 +513,7 @@ print(paste('SD of test score:',sd(analysisdata$test_score)))
 
 ## 통계량
 ### 빠르게 통계량 테이블 만들기
+`datasummary_skim`을 통하여 다음과 같이 간단하게 테이블을 작성할 수 있다. `ouput =`옵션을 살펴보면 `.docx`, `latex`, `html`등 다양한 종류로 결과물을 내보낼 수 있으니 상황에 따라 적합한 옵션을 이용하면 좋을 것이다.
 
 
 ```r
@@ -372,24 +523,91 @@ library("modelsummary")
 analysisdata%>%
   filter(year==2)%>%
   select(female,starts_with("paren"),letter,summerschool,test_score)%>%
-  datasummary_skim(output = 'markdown',histogram=FALSE)
+  datasummary_skim(output = 'html',histogram=True)
 ```
 
 ```
-Adding missing grouping variables: `year`
+Error in datasummary_skim_numeric(data, output = output, fmt = fmt, histogram = histogram, : object 'True' not found
 ```
 
 
+### 커스텀 테이블 만들기
 
-|                   | Unique (#)| Missing (%)| Mean|  SD|  Min| Median|  Max|
-|:------------------|----------:|-----------:|----:|---:|----:|------:|----:|
-|year               |          1|           0|  2.0| 0.0|  2.0|    2.0|  2.0|
-|female             |          2|           0|  0.5| 0.5|  0.0|    1.0|  1.0|
-|parental_schooling |         12|           0| 11.3| 1.1| 10.0|   11.0| 23.0|
-|parental_lincome   |       3486|           0| 14.6| 0.7| 12.7|   14.5| 19.4|
-|letter             |          2|           0|  0.2| 0.4|  0.0|    0.0|  1.0|
-|summerschool       |          2|           0|  0.5| 0.5|  0.0|    0.0|  1.0|
-|test_score         |       3486|           0| -0.0| 1.0| -4.1|    0.0|  3.7|
+수식을 사용하여 원하는 테이블을 만드려면 `datasummary()`함수를 이용하면 편리하다.
 
+`female, parental_schooling, letter, test_score`를 `summerschool`참여에 따라 분류하여 테이블을 작성하고 싶으면 다음과 같은 코드를 작성하면 된다.
 
-test
+```r
+datasummary(female+parental_schooling+letter+test_score ~ Factor(summerschool)*
+              (Mean+SD),sparse_header = FALSE,data = analysisdata %>%
+              filter(year == 2),output = 'html')
+```
+
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1"></th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">0</div></th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">1</div></th>
+</tr>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> Mean </th>
+   <th style="text-align:right;"> SD </th>
+   <th style="text-align:right;"> Mean </th>
+   <th style="text-align:right;"> SD </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> female </td>
+   <td style="text-align:right;"> 0.51 </td>
+   <td style="text-align:right;"> 0.50 </td>
+   <td style="text-align:right;"> 0.52 </td>
+   <td style="text-align:right;"> 0.50 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> parental_schooling </td>
+   <td style="text-align:right;"> 11.03 </td>
+   <td style="text-align:right;"> 0.74 </td>
+   <td style="text-align:right;"> 11.67 </td>
+   <td style="text-align:right;"> 1.34 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> letter </td>
+   <td style="text-align:right;"> 0.09 </td>
+   <td style="text-align:right;"> 0.29 </td>
+   <td style="text-align:right;"> 0.43 </td>
+   <td style="text-align:right;"> 0.49 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> test_score </td>
+   <td style="text-align:right;"> -0.30 </td>
+   <td style="text-align:right;"> 0.85 </td>
+   <td style="text-align:right;"> 0.35 </td>
+   <td style="text-align:right;"> 1.05 </td>
+  </tr>
+</tbody>
+</table>
+
+## 차트 만들기
+### 산점도 그리기
+
+R에서 그래프를 그리는 것은 보통 `ggplot2`를 이용하여 그린다.
+
+```r
+# load ggplot2
+library("ggplot2")
+# create a scatter plot with a fitted line
+ggplot(analysisdata%>%filter(year==5),  
+       aes(x=parental_lincome,y=test_score))+
+       geom_smooth() +
+       geom_point()
+```
+
+```
+`geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+```
+
+<img src="{{< blogdown/postref >}}index.ko_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+
