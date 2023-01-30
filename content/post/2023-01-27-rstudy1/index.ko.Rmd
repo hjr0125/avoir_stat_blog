@@ -164,3 +164,18 @@ print(paste('Mean of test score:',mean(analysisdata$test_score)))
 print(paste('SD of test score:',sd(analysisdata$test_score)))
 ```
 
+## 통계량
+### 빠르게 통계량 테이블 만들기
+
+```{r}
+# load modelsummary
+library("modelsummary")
+# create a summary stat table
+analysisdata%>%
+  filter(year==2)%>%
+  select(female,starts_with("paren"),letter,summerschool,test_score)%>%
+  datasummary_skim(output = 'markdown',histogram=FALSE)
+```
+
+
+test

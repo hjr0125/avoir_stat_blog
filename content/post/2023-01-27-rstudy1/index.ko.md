@@ -361,3 +361,35 @@ print(paste('SD of test score:',sd(analysisdata$test_score)))
 [1] "SD of test score: 0.999872448979073"
 ```
 
+## 통계량
+### 빠르게 통계량 테이블 만들기
+
+
+```r
+# load modelsummary
+library("modelsummary")
+# create a summary stat table
+analysisdata%>%
+  filter(year==2)%>%
+  select(female,starts_with("paren"),letter,summerschool,test_score)%>%
+  datasummary_skim(output = 'markdown',histogram=FALSE)
+```
+
+```
+Adding missing grouping variables: `year`
+```
+
+
+
+|                   | Unique (#)| Missing (%)| Mean|  SD|  Min| Median|  Max|
+|:------------------|----------:|-----------:|----:|---:|----:|------:|----:|
+|year               |          1|           0|  2.0| 0.0|  2.0|    2.0|  2.0|
+|female             |          2|           0|  0.5| 0.5|  0.0|    1.0|  1.0|
+|parental_schooling |         12|           0| 11.3| 1.1| 10.0|   11.0| 23.0|
+|parental_lincome   |       3486|           0| 14.6| 0.7| 12.7|   14.5| 19.4|
+|letter             |          2|           0|  0.2| 0.4|  0.0|    0.0|  1.0|
+|summerschool       |          2|           0|  0.5| 0.5|  0.0|    0.0|  1.0|
+|test_score         |       3486|           0| -0.0| 1.0| -4.1|    0.0|  3.7|
+
+
+test
