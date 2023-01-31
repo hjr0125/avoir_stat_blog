@@ -54,7 +54,7 @@ params:
         emoji: 🍵
         subtitle: 경제 분석을 위한 R, Stata를 공부하는 블로그
         avatar:
-            enabled: false
+            enabled: true
             local: true
             src: img/front.jpg
 
