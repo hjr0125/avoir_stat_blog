@@ -16,6 +16,7 @@ license: ~
 hidden: no
 comments: yes
 ---
+
 ## 시작
 UoB의 [Tutorial](https://hhsievertsen.shinyapps.io/applied_econ_with_R_dynamic/#section-research-question-data)을 따라가며 R 복습 겸 연습을 하려 이 글을 작성한다.
 
@@ -178,7 +179,7 @@ library("modelsummary")
 analysisdata%>%
   filter(year==2)%>%
   select(female,starts_with("paren"),letter,summerschool,test_score)%>%
-  datasummary_skim(output = 'html',histogram=True)
+  datasummary_skim(output = 'html',histogram=TRUE)
 ```
 
 
@@ -194,12 +195,10 @@ datasummary(female+parental_schooling+letter+test_score ~ Factor(summerschool)*
 ```
 
 ## 차트 만들기
-### 산점도 그리기
+### Scatter Plot
 
-R에서 그래프를 그리는 것은 보통 `ggplot2`를 이용하여 그린다.
-```{r}
-# load ggplot2
-library("ggplot2")
+R에서 그래프를 그리는 것은 보통 `ggplot2`를 이용하여 그린다. 위의 Cheat sheet를 참조하면 그래프의 다양한 부분들을 쉽게 바꿀수 있다.
+```{r message=FALSE}
 # create a scatter plot with a fitted line
 ggplot(analysisdata%>%filter(year==5),  
        aes(x=parental_lincome,y=test_score))+
@@ -207,3 +206,110 @@ ggplot(analysisdata%>%filter(year==5),
        geom_point()
 ```
 
+### Bar Chart and Box Plot
+위의 산점도에서 부모의 소득과 시험성적이 연관되어 있음을 확인할 수 있다. 더 나아가 부모의 학력수준과 어떻게 연관되어 있을지 Bar chart와 Box plot을 그려 확인하여보자.
+
+`patchwork`와 같은 library를 사용하면 여러 Plot을 하나의 파일로 묶어서 내보낼 수 있다. 대체할 수 있는 library들로는 `cowplot`, `gridExtra`등이 있다.
+
+```{r message=FALSE}
+library("patchwork")
+
+rawchart <- analysisdata %>% filter(year == 5) %>% ggplot(x = as.factor(fill)) +
+  theme_classic()
+p1 <- rawchart + geom_smooth(aes(parental_schooling,test_score)) +
+  geom_point(aes(parental_schooling,test_score),alpha=0.1)+
+  labs(x='Parental Schooling',y= 'Test Score Year 5')
+
+p2 <- rawchart + geom_bar(aes(as.factor(summerschool),test_score),
+                          stat='summary',fun='mean') +
+  labs(x='Attended Summer School',y= 'Test Score Year 5')
+
+p3 <- rawchart + geom_boxplot(aes(as.factor(summerschool),parental_lincome)) +
+  labs(x='Attended Summer School',y='Log Parental Income')
+
+p1/(p2+p3)
+```
+
+### Histogram and Densirty Chart
+
+```{r}
+analysisdata %>% filter(year == 6) %>% ggplot(., aes(x = test_score, fill =
+                                                       as.factor(summerschool))) +
+  geom_histogram(
+    aes(y = after_stat(density)),
+    bins = 50,
+    alpha = 0.5,
+    position = 'identity',
+    color = 'white'
+  ) +
+  geom_density(alpha = 0.3, color = 'white') +
+  labs(x = 'Test Score Year 6', y = 'Density', fill = 'Attended Summer School')  
+```
+
+### Ridgeline plot
+```{r message=FALSE}
+library(ggridges)
+ggplot(analysisdata,
+       aes(
+         x = test_score,
+         y = as.factor(year),
+         fill = as.factor(letter)
+       )) +
+  geom_density_ridges(
+    alpha = 0.5,
+    scale = 1.5,
+    color = "white",
+    from = -2.5,
+    to = 2.5
+  ) + theme_ridges(grid = FALSE) +
+  scale_y_discrete(expand = c(0, 0)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set1", labels = c("No letter", "Letter")) +
+  labs(x = "Test Score",
+       y = "Year",
+       fill = " ",
+       title = "Test score distribution by reminder letter status  & year")
+```
+
+## Balancing tables
+### Pairwise t-test
+
+`test_score`와 `summerschool`이 Correlate되어 있는지 확인하기 위하여 t-test를 진행하자.
+
+Summer School이 있기 전인 5년도의 `test_score`를 이용하여 가설검증을 하여, 여름학기를 들은 학생과 그렇지 않은 학생간의 시험점수 차이가 있었음을 확인하여 보자.
+
+```{r}
+t.test(test_score ~ summerschool,data = analysisdata %>% filter(year == 5))
+```
+
+### 평균값 비교 테이블
+
+```{r}
+library(estimatr)
+
+testdata <- analysisdata %>% filter(year == 5) %>%
+  ungroup() %>%
+  mutate(Treated = ifelse(letter == 1, 'Letter', 'No Letter')) %>%
+  select(female,
+         parental_schooling,
+         parental_lincome,
+         test_score,
+         Treated) %>%
+  rename(
+    'Female' = female,
+    'Parental Schooling' = parental_schooling,
+    'Log Parental Income' = parental_lincome,
+    "Test Score" = test_score
+  )
+
+datasummary_balance(
+  ~ Treated,
+  data = testdata,
+  title = 'Balance of pre-treatment variables',
+  fmt = '%.3f',
+  dinm_statistic = 'p.value'
+)
+```
+
+## OLS
+### `lm()`
