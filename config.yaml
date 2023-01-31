@@ -54,7 +54,7 @@ params:
         emoji: 🍵
         subtitle: 경제 분석을 위한 R, Stata를 공부하는 블로그
         avatar:
-            enabled: true
+            enabled: false
             local: true
             src: img/avatar.png
 
@@ -168,9 +168,9 @@ params:
 
     defaultImage:
         opengraph:
-            enabled: true
+            enabled: false
             local: false
-            src: img/IMG_5346.jpeg
+            src: 
 
     colorScheme:
         # Display toggle
