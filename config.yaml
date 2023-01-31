@@ -38,7 +38,7 @@ permalinks:
 params:
     mainSections:
         - post
-    featuredImageField: text
+    featuredImageField: image
     rssFullContent: true
     favicon: /favicon.ico
 
@@ -56,7 +56,7 @@ params:
         avatar:
             enabled: false
             local: true
-            src: img/avatar.png
+            src: img/front.jpg
 
     article:
         math: true
